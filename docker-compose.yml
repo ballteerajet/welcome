@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8000:80" # Expose Apache on port 8000 of your host machine
+        volumes:
+            - .:/var/www/html # Sync the app directory
+        environment:
+            - APACHE_RUN_USER=www-data
+            - APACHE_RUN_GROUP=www-data
+        networks:
+            - laravel
+
+    db:
+        image: mysql:8.0
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - laravel
+
+networks:
+    laravel:
+        driver: bridge
+
+volumes:
+    db_data:
