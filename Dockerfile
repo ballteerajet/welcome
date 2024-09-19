@@ -22,7 +22,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # Copy custom Apache ports configuration
-COPY ./docker/apache/ports.conf /etc/apache2/ports.conf
+COPY docker/apache/ports.conf /etc/apache2/ports.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
