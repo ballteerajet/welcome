@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gd \
     && docker-php-ext-install pdo pdo_mysql zip
 
-# Enable Apache mod_rewrite (necessary for Laravel)
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
 # Set working directory
@@ -20,6 +20,9 @@ WORKDIR /var/www/html
 
 # Copy application source
 COPY . /var/www/html/
+
+# Copy custom Apache ports configuration
+COPY ./docker/apache/ports.conf /etc/apache2/ports.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
@@ -34,9 +37,6 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Expose the port from the PORT environment variable or fallback to 80
 EXPOSE ${PORT:-80}
-
-# Modify Apache configuration to listen on the specified port
-RUN sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf
 
 # Start Apache
 CMD ["apache2-foreground"]
