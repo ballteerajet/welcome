@@ -6,12 +6,11 @@ services:
             context: .
             dockerfile: Dockerfile
         ports:
-            - "8000:80" # Expose Apache on port 8000 of your host machine
-        volumes:
-            - .:/var/www/html # Sync the app directory
+            - "${PORT:-8000}:${PORT:-80}" # ใช้พอร์ตจาก environment variable
         environment:
-            - APACHE_RUN_USER=www-data
-            - APACHE_RUN_GROUP=www-data
+            - PORT=10000 # ตั้งค่า PORT ใน environment ของ container
+        volumes:
+            - .:/var/www/html
         networks:
             - laravel
 

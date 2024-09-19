@@ -15,9 +15,6 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite (necessary for Laravel)
 RUN a2enmod rewrite
 
-# Copy custom Apache configuration file (optional, if you have any custom configurations)
-COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Set working directory
 WORKDIR /var/www/html
 
@@ -35,8 +32,11 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port 80
-EXPOSE 80
+# Expose the port from the PORT environment variable or fallback to 80
+EXPOSE ${PORT:-80}
 
-# Start Apache server
+# Modify Apache configuration to listen on the specified port
+RUN sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf
+
+# Start Apache
 CMD ["apache2-foreground"]
