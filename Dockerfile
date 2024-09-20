@@ -1,9 +1,8 @@
 # Step 1: Choose a base image
 FROM php:8.1-fpm
 
-# Step 2: Install dependencies including Nginx
+# Step 2: Install dependencies
 RUN apt-get update && apt-get install -y \
-    nginx \
     build-essential \
     libpng-dev \
     libjpeg-dev \
@@ -32,16 +31,13 @@ COPY . .
 # Step 6: Install project dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Step 7: Configure Nginx
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Step 8: Set permissions for Laravel
+# Step 7: Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
     && chmod -R 755 /var/www/bootstrap/cache
 
-# Step 9: Expose ports
+# Step 8: Expose the port for Nginx/Apache
 EXPOSE 80
 
-# Step 10: Start Nginx and PHP-FPM together
-CMD service nginx start && php-fpm
+# Step 9: Run the PHP server
+CMD ["php-fpm"]
